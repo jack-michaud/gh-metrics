@@ -161,6 +161,18 @@ func (ui *UI) getFirstApprovalToMerge(author, prMergedAtString string, reviews R
 	return DefaultEmptyCell
 }
 
+func (ui *UI) getWasFirstReviewApproval(reviews Reviews) string {
+	if reviews.TotalCount > 0 {
+		if reviews.Nodes[0].State == ReviewApprovedState {
+			return "Yes"
+		} else {
+			return "No"
+		}
+	} else {
+		return DefaultEmptyCell
+	}
+}
+
 // PrintMetrics returns a string representation of the metrics summary for
 // a set of pull requests determined by the supplied date range, using
 // DefaultResultCount.
@@ -215,6 +227,7 @@ func (ui *UI) printMetricsImpl(defaultResultCount int) string {
 		"Feature Lead Time",
 		"First to Last Review",
 		"First Approval to Merge",
+		"Was first review an approval",
 	})
 
 	for {
@@ -247,6 +260,7 @@ func (ui *UI) printMetricsImpl(defaultResultCount int) string {
 					node.PullRequest.MergedAt,
 					node.PullRequest.Reviews,
 				),
+				ui.getWasFirstReviewApproval(node.PullRequest.Reviews),
 			})
 		}
 
